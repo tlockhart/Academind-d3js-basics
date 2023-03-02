@@ -1,0 +1,55 @@
+/* VIDEO1*/
+.test-container {
+    width: 250px;
+    height: 200px;
+}
+
+.container2, .bar-container {
+    width: 250px;
+    height: 200px;
+    border: 1px solid #720570;
+  }
+
+  .bar1 {
+    /* fill: #720570; */
+    background-color: #720570;
+  }
+  .bar {
+    fill: #720570;
+  }
+
+/* Make the bars appear horizontally instead on 
+vertically*/
+  .bar-container {
+   display: flex;
+   justify-content: space-around;
+  }
+
+  /* VIDEO2*/
+  html {
+    font-family: sans serif;
+  }
+
+  .added {
+    background-color: greenyellow;
+  }
+  .redundant {
+    background-color: lightcoral;
+  }
+
+  .updated {
+    background-color: orange;
+  }
+ul {
+  margin: 3rem auto;
+  padding: 1rem;
+}
+  li {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.26);
+    margin: 1rem 0;
+    padding: 0.5rem;
+  }
+
+  ul, li {
+    list-style: none;
+  }
