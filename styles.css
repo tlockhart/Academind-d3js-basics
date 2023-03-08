@@ -1,3 +1,7 @@
+#app {
+  display: flex;
+}
+
 /* VIDEO1*/
 .test-container {
     width: 250px;

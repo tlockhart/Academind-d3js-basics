@@ -8,6 +8,8 @@ const MARGINS = { top: 20, bottom: 10};
 const CHART_WIDTH = 600;
 const CHART_HEIGHT = 400 - MARGINS.top - MARGINS.bottom;
 
+let selectedData = DUMMY_DATA;
+
 // scaleBand - equally distributed space along the x axis, 10% of space is for padding
 const x = d3.scaleBand().rangeRound([0, CHART_WIDTH]).padding(0.1);
 
@@ -43,6 +45,10 @@ chart.append('g')
 .attr('color', '#4f009e');
 
 /**
+ * Controls the display of the bar data
+ */
+function renderChart() {
+  /**
  * select all elements with a .bar class ( they don't exist yet, d3js will create them)
  * join the elements with .bar with the Dummy Data
  * append a rect svg element - rectangle, with the class
@@ -52,26 +58,85 @@ chart.append('g')
  * to let d3js translate the scales for the space available
  */
 chart.selectAll(".bar")
-  .data(DUMMY_DATA)
-  .enter()
-  .append("rect")
-  .classed("bar", true)
-  .attr("width", x.bandwidth())
-  .attr("height",  (data) => CHART_HEIGHT - y(data.value))
-  .attr("x", (data) => x(data.region))
-  .attr("y", (data) => y(data.value));
+.data(selectedData, data => data.id)
+.enter()
+.append("rect")
+.classed("bar", true)
+.attr("width", x.bandwidth())
+.attr("height",  (data) => CHART_HEIGHT - y(data.value))
+.attr("x", (data) => x(data.region))
+.attr("y", (data) => y(data.value));
+
+// Logic to remove bars:
+chart.selectAll('.bar')
+.data(selectedData, data => data.id)
+.exit()
+.remove();
 
 // add labels above the bars
 chart
-  .selectAll(".label")
-  .data(DUMMY_DATA)
-  .enter()
-  .append("text")
-  .text((data) => data.value)
-  .attr("x", data => x(data.region) + x.bandwidth()/2)
-  .attr("y", data => y(data.value) - 20)
-  .attr('text-anchor', 'middle')
-  .classed('label', true);
+.selectAll(".label")
+.data(selectedData, data => data.id)
+.enter()
+.append("text")
+.text((data) => data.value)
+.attr("x", data => x(data.region) + x.bandwidth()/2)
+.attr("y", data => y(data.value) - 20)
+.attr('text-anchor', 'middle')
+.classed('label', true);
+
+// Logic to remove labels
+chart.selectAll('.label')
+.data(selectedData, data => data.id)
+.exit()
+.remove();
+}
+
+  /**
+   * Add controls to add and remove bars
+   */
+
+  // Select the div->ul->li
+const listItems = d3
+.select('#data')
+.select('ul')
+.selectAll('li')
+.data(DUMMY_DATA)
+.enter()
+.append('li');
+
+// Add region text to spans
+listItems.append('span').text((data) => data.region);
+
+// Initialize Chart Data
+renderChart();
+
+// keep track of unselected vars
+let unselectedIds = [];
+
+// Add checkbox to add or remove bars, register a change event listerner
+listItems
+.append('input')
+.attr('type', 'checkbox')
+.attr('checked', true)
+.on('change', (data) => {
+  console.log("Data:", data);
+  if(unselectedIds.indexOf(data.id) === -1) {
+    // add the items because it is not dislayed
+    unselectedIds.push(data.id);
+  } else {
+    // remove the item because it is displayed
+    unselectedIds = unselectedIds.filter( id => id !== data.id);
+  }
+  // change selected data to
+  selectedData = DUMMY_DATA.filter(data => unselectedIds.indexOf(data.id) === -1);
+
+  console.log("SelectedData:", selectedData);
+
+  // rerender chart after selection have been made
+  renderChart();
+});
+
 
 
 
